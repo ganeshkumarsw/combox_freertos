@@ -41,7 +41,10 @@ extern "C" {
 
 
 /* USER CODE BEGIN Prototypes */
-
+void Console_INFO(const char *fmt, ...);
+void Console_DEBUG(const char *fmt, ...);
+void Console_WARNING(const char *fmt, ...);
+void Console_ERROR(const char *fmt, ...);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

@@ -20,6 +20,7 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "mbedtls.h"
+#include "rng.h"
 #include "spi.h"
 #include "usart.h"
 #include "gpio.h"
@@ -93,6 +94,7 @@ int main(void)
   MX_MBEDTLS_Init();
   MX_SPI1_Init();
   MX_USART2_UART_Init();
+  MX_RNG_Init();
   /* Call PreOsInit function */
   MX_MBEDTLS_Init();
   /* USER CODE BEGIN 2 */

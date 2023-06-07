@@ -29,7 +29,7 @@
 #define DBG_BUF_LEN 512
 static char DBG_BUFFER[DBG_BUF_LEN];
 
-void APP_INFO(const char *fmt, ...)
+void Console_INFO(const char *fmt, ...)
 {
 	va_list args;
 	int len = 0;
@@ -43,7 +43,7 @@ void APP_INFO(const char *fmt, ...)
 	HAL_UART_Transmit(DEBUG_PORT, (uint8_t *)(DBG_BUFFER), len, len);
 }
 
-void APP_DEBUG(const char *fmt, ...)
+void Console_DEBUG(const char *fmt, ...)
 {
 	va_list args;
 	int len = 0;
@@ -58,7 +58,7 @@ void APP_DEBUG(const char *fmt, ...)
 	HAL_UART_Transmit(DEBUG_PORT, (uint8_t *)(DBG_BUFFER), len, len);
 }
 
-void APP_WARNING(const char *fmt, ...)
+void Console_WARNING(const char *fmt, ...)
 {
 	va_list args;
 	int len = 0;
@@ -72,7 +72,7 @@ void APP_WARNING(const char *fmt, ...)
 	HAL_UART_Transmit(DEBUG_PORT, (uint8_t *)(DBG_BUFFER), len, len);
 }
 
-void APP_ERROR(const char *fmt, ...)
+void Console_ERROR(const char *fmt, ...)
 {
 	va_list args;
 	int len = 0;

@@ -57,6 +57,9 @@
 #define LWIP_SOCKET 0
 #define SYS_LIGHTWEIGHT_PROT 0
 
+#define LWIP_ALTCP			1
+#define LWIP_ALTCP_TLS		1
+#define LWIP_ALTCP_TLS_MBEDTLS	1
 #define LWIP_IGMP                       1
 /*----- Value in opt.h for LWIP_DHCP: 0 -----*/
 #define LWIP_DHCP 0

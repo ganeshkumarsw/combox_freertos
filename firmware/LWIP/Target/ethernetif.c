@@ -152,7 +152,7 @@ static void low_level_init(struct netif *netif)
   enc424j600_hw_enable();
 
   /* Display in the console the MAC address */
-  APP_DEBUG("MAC = %02x.%02x.%02x.%02x.%02x.%02x", MACAddr[0], MACAddr[1], MACAddr[2], MACAddr[3], MACAddr[4], MACAddr[5]);
+  Console_DEBUG("MAC = %02x.%02x.%02x.%02x.%02x.%02x", MACAddr[0], MACAddr[1], MACAddr[2], MACAddr[3], MACAddr[4], MACAddr[5]);
 
   /* End ETH HAL Init */
 
@@ -921,8 +921,8 @@ int enc424j600_hw_init()
     }
   }
 
-  APP_DEBUG("[enc424] Link Status %d", isLinkOK);
-  APP_DEBUG("[enc424] ESTAT 0x%X", enc424j600_read_sfr(ESTATL));
+  Console_DEBUG("[enc424] Link Status %d", isLinkOK);
+  Console_DEBUG("[enc424] ESTAT 0x%X", enc424j600_read_sfr(ESTATL));
   macon2 = MACON2_DEFER | PADCFG0 | TXCRCEN | HFRMEN | 0x2;
 
   enc424j600_write_sfr(MACON2L, macon2 | FULDPX);
@@ -1015,7 +1015,7 @@ int enc424j600_read_rx_area(unsigned char *dst, int len, unsigned short srcaddr)
   if (srcaddr >= SRAM_SIZE)
   {
     srcaddr -= RX_BUFFER_SIZE;
-    APP_DEBUG("[enc424] srcaddr >= SRAM_SIZE 0x%X\r\n", srcaddr);
+    Console_DEBUG("[enc424] srcaddr >= SRAM_SIZE 0x%X\r\n", srcaddr);
   }
 
   // Check if buffer to read is overlapped
@@ -1045,7 +1045,7 @@ void enc424j600_clear_unprocessed_rx_area()
 
   if (tail < RXSTART)
   {
-    APP_DEBUG("[enc424] tail < RXSTART 0x%X \r\n", tail);
+	Console_DEBUG("[enc424] tail < RXSTART 0x%X \r\n", tail);
     tail = SRAM_SIZE - 2;
   }
 
@@ -1095,7 +1095,7 @@ int enc424j600_hw_rx(unsigned char *buff)
 
   if (len >= MAX_FRAMELEN)
   {
-    APP_DEBUG("[enc424] len >= MAX_FRAMELEN %d \r\n", len);
+	Console_DEBUG("[enc424] len >= MAX_FRAMELEN %d \r\n", len);
     return -1;
   }
 

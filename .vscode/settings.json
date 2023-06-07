@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "mbedtls.h": "c",
+        "mbedtls_config.h": "c"
+    }
+}
