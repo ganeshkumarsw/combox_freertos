@@ -26,7 +26,7 @@
 #define DEBUG_PORT (&huart2)
 
 /* USER CODE BEGIN 0 */
-#define DBG_BUF_LEN 512
+#define DBG_BUF_LEN 1024
 static char DBG_BUFFER[DBG_BUF_LEN];
 
 void Console_INFO(const char *fmt, ...)

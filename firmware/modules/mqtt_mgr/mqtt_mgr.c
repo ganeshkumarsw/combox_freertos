@@ -196,10 +196,10 @@ void mqtt_mgr_init(void)
   mqtt_client = mqtt_client_new();
 #if LWIP_ALTCP && LWIP_ALTCP_TLS
   mbedtls_debug_set_threshold(3);
-  mqtt_client_info.tls_config = altcp_tls_create_config_client(ca_crt, sizeof(ca_crt));
+  mqtt_client_info.tls_config = altcp_tls_create_config_client(NULL, 0);
 #endif
   mqtt_client_connect(mqtt_client,
-                      &mqtt_ip, MQTT_PORT,
+                      &mqtt_ip, MQTT_TLS_PORT,
                       mqtt_connection_cb, LWIP_CONST_CAST(void *, &mqtt_client_info),
                       &mqtt_client_info);
 
