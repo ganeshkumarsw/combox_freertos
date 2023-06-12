@@ -60,11 +60,20 @@
 #define LWIP_ALTCP			1
 #define LWIP_ALTCP_TLS		1
 #define LWIP_ALTCP_TLS_MBEDTLS	1
-#define LWIP_IGMP                       1
+#define LWIP_IGMP      			0
+
+#define TCP_MSS                         (1496)
 /*----- Value in opt.h for LWIP_DHCP: 0 -----*/
 #define LWIP_DHCP 0
 /*----- Value in opt.h for LWIP_DNS: 0 -----*/
 #define LWIP_DNS 0
+/**
+* MEM_SIZE: the size of the heap memory. If the application will send
+* a lot of data that needs to be copied, this should be set high.
+*/
+#define MEM_SIZE                        (15UL * 1024UL)
+#define PBUF_POOL_SIZE         	 		    (5)
+#define PBUF_POOL_BUFSIZE       		    1600
 /*----- Value in opt.h for MEM_ALIGNMENT: 1 -----*/
 #define MEM_ALIGNMENT 4
 /*----- Value in opt.h for LWIP_ETHERNET: LWIP_ARP || PPPOE_SUPPORT -*/
@@ -74,11 +83,11 @@
 /*----- Value in opt.h for TCP_SND_QUEUELEN: (4*TCP_SND_BUF + (TCP_MSS - 1))/TCP_MSS -----*/
 #define TCP_SND_QUEUELEN 9
 /*----- Value in opt.h for TCP_SNDLOWAT: LWIP_MIN(LWIP_MAX(((TCP_SND_BUF)/2), (2 * TCP_MSS) + 1), (TCP_SND_BUF) - 1) -*/
-#define TCP_SNDLOWAT 1071
+//#define TCP_SNDLOWAT 1071
 /*----- Value in opt.h for TCP_SNDQUEUELOWAT: LWIP_MAX(TCP_SND_QUEUELEN)/2, 5) -*/
 #define TCP_SNDQUEUELOWAT 5
 /*----- Value in opt.h for TCP_WND_UPDATE_THRESHOLD: LWIP_MIN(TCP_WND/4, TCP_MSS*4) -----*/
-#define TCP_WND_UPDATE_THRESHOLD 536
+//#define TCP_WND_UPDATE_THRESHOLD 536
 /*----- Value in opt.h for LWIP_NETIF_LINK_CALLBACK: 0 -----*/
 #define LWIP_NETIF_LINK_CALLBACK 1
 /*----- Value in opt.h for TCPIP_THREAD_STACKSIZE: 0 -----*/
@@ -132,6 +141,14 @@
 /* USER CODE BEGIN 1 */
 #define LWIP_DEBUG		LWIP_DBG_ON
 #define LWIP_NOASSERT
+
+#define ALTCP_MBEDTLS_DEBUG                           LWIP_DBG_ON
+
+/** Configure lwIP debug level of the mbedTLS library */
+#define ALTCP_MBEDTLS_LIB_DEBUG                       LWIP_DBG_ON
+
+#undef LWIP_PLATFORM_DIAG
+#define LWIP_PLATFORM_DIAG(x) do {Console_INFO x;} while(0)
 
 /* USER CODE END 1 */
 

@@ -51,7 +51,7 @@
 /* ETH Setting  */
 
 /* USER CODE BEGIN 1 */
-#define ETH_MAX_PAYLOAD (1536)
+#define ETH_MAX_PAYLOAD (1600)
 #define ETH_MAX_PACKET_SIZE ETH_MAX_PAYLOAD
 #undef ETH_RX_BUF_SIZE
 #define ETH_RX_BUF_SIZE ETH_MAX_PAYLOAD
@@ -95,11 +95,11 @@ typedef struct
 } RxBuff_t;
 
 /* Memory Pool Declaration */
-#define ETH_RX_BUFFER_CNT 12U
-LWIP_MEMPOOL_DECLARE(RX_POOL, ETH_RX_BUFFER_CNT, sizeof(RxBuff_t), "Zero-copy RX PBUF pool");
+//#define ETH_RX_BUFFER_CNT 20U
+//LWIP_MEMPOOL_DECLARE(RX_POOL, ETH_RX_BUFFER_CNT, sizeof(RxBuff_t), "Zero-copy RX PBUF pool");
 
 /* Variable Definitions */
-static uint8_t RxAllocStatus;
+//static uint8_t RxAllocStatus;
 
 /* USER CODE BEGIN 2 */
 
@@ -157,7 +157,7 @@ static void low_level_init(struct netif *netif)
   /* End ETH HAL Init */
 
   /* Initialize the RX POOL */
-  LWIP_MEMPOOL_INIT(RX_POOL);
+//  LWIP_MEMPOOL_INIT(RX_POOL);
 
 #if LWIP_ARP || LWIP_ETHERNET
 
@@ -219,7 +219,11 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
   struct pbuf *q = NULL;
   err_t errval = ERR_OK;
 
-  //  APP_INFO("[enc_424] low_level_output");
+  //  APP_INFO("[enc_424] low_level_output")
+  if (p != NULL)
+  {
+	Console_DEBUG("[enc_424] Pkt Tx len %d", p->tot_len);
+  }
 
   for (q = p; q != NULL; q = q->next)
   {
@@ -230,12 +234,11 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
 
     /* Send buffer with Ethernet Chip ENC424  */
     enc424j600_hw_tx((unsigned char *)q->payload, q->len); /* send data */
-
-    //    APP_INFO("[enc_424] Pkt Tx len %d", q->len);
   }
 
   if (p != NULL)
   {
+	Console_DEBUG("[enc_424] Pkt Tx len %d", p->tot_len);
     /* Update SNMP stats (only if you use SNMP) */
     LINK_STATS_INC(link.recv);
     MIB2_STATS_NETIF_ADD(netif, ifinoctets, p->tot_len);
@@ -257,6 +260,7 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
   pbuf_ref(p);
   pbuf_free(p);
 
+
   // while (osSemaphoreAcquire(TxPktSemaphore, TIME_WAITING_FOR_INPUT) != osOK)
 
   // {
@@ -275,33 +279,39 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
  */
 static struct pbuf *low_level_input(struct netif *netif)
 {
-  uint8_t *buff = NULL;
+//  uint8_t *buff = NULL;
   struct pbuf *p_pbuf = NULL;
-  struct pbuf_custom *p = LWIP_MEMPOOL_ALLOC(RX_POOL);
-
-  if (p)
-  {
+//  struct pbuf_custom *p = LWIP_MEMPOOL_ALLOC(RX_POOL);
+//
+//  if (p)
+//  {
     /* Get the buff from the struct pbuf address. */
-    buff = (uint8_t *)p + offsetof(RxBuff_t, buff);
-    p->custom_free_function = pbuf_free_custom;
+//    buff = (uint8_t *)p + offsetof(RxBuff_t, buff);
+//    p->custom_free_function = pbuf_free_custom;
     /* Initialize the struct pbuf.
      * This must be performed whenever a buffer's allocated because it may be
      * changed by lwIP or the app, e.g., pbuf_free decrements ref. */
-    p_pbuf = pbuf_alloced_custom(PBUF_RAW, 0, PBUF_REF, p, buff, ETH_RX_BUF_SIZE);
+//    p_pbuf = pbuf_alloced_custom(PBUF_RAW, 0, PBUF_REF, p, buff, ETH_RX_BUF_SIZE);
 
-    int len = enc_424j600_rcv_process(p_pbuf->payload);
+    p_pbuf = pbuf_alloc(PBUF_RAW, ETH_RX_BUF_SIZE, PBUF_POOL);
+    if(p_pbuf)
+    {
+    	int len = enc_424j600_rcv_process(p_pbuf->payload);
 
-    if (len <= 0)
-    {
-      pbuf_free(p_pbuf);
-      p_pbuf = NULL;
-    }
-    else
-    {
-      p_pbuf->len = p_pbuf->tot_len = len;
-      //      APP_INFO("[enc_424] Pkt Rx len %d", len);
-    }
-  }
+		if (len <= 0)
+		{
+		  pbuf_free(p_pbuf);
+		  p_pbuf = NULL;
+		}
+		else
+		{
+		  p_pbuf->len = p_pbuf->tot_len = len;
+		  if(p_pbuf->len > 1000)
+		  {
+			  Console_DEBUG("[enc_424] Pkt Rx len %d", len);
+		  }
+		}
+	  }
 
   return p_pbuf;
 }
@@ -423,20 +433,20 @@ err_t ethernetif_init(struct netif *netif)
  * @param  pbuf: pbuf to be freed
  * @retval None
  */
-void pbuf_free_custom(struct pbuf *p)
-{
-  struct pbuf_custom *custom_pbuf = (struct pbuf_custom *)p;
-  LWIP_MEMPOOL_FREE(RX_POOL, custom_pbuf);
-
-  /* If the Rx Buffer Pool was exhausted, signal the ethernetif_input task to
-   * call HAL_ETH_GetRxDataBuffer to rebuild the Rx descriptors. */
-
-  if (RxAllocStatus == RX_ALLOC_ERROR)
-  {
-    RxAllocStatus = RX_ALLOC_OK;
-    osSemaphoreRelease(RxPktSemaphore);
-  }
-}
+//void pbuf_free_custom(struct pbuf *p)
+//{
+//  struct pbuf_custom *custom_pbuf = (struct pbuf_custom *)p;
+//  LWIP_MEMPOOL_FREE(RX_POOL, custom_pbuf);
+//
+//  /* If the Rx Buffer Pool was exhausted, signal the ethernetif_input task to
+//   * call HAL_ETH_GetRxDataBuffer to rebuild the Rx descriptors. */
+//
+//  if (RxAllocStatus == RX_ALLOC_ERROR)
+//  {
+//    RxAllocStatus = RX_ALLOC_OK;
+//    osSemaphoreRelease(RxPktSemaphore);
+//  }
+//}
 
 /* USER CODE BEGIN 6 */
 
