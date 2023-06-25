@@ -1,2 +1,5 @@
-
+.vscode/
 firmware/Debug/
+firmware/Release/
+firmware/.settings/
+
